@@ -1,0 +1,54 @@
+version: "3.9"
+services:
+  mongo_node_1:
+      image: mongo:latest
+      container_name: mongo_node_1
+      command: ["--replSet", "testSet"]
+      hostname: node1
+      networks:
+        mongo_net:
+          ipv4_address: 172.40.0.2
+      expose:
+        - 27017
+      volumes:
+  mongo_node_2:
+      image: mongo:latest
+      container_name: mongo_node_2
+      command: ["--replSet", "testSet"]
+      hostname: node2
+      networks:
+        mongo_net:
+          ipv4_address: 172.40.0.3
+      expose:
+        - 27017
+      volumes:
+  mongo_node_3:
+      image: mongo:latest
+      container_name: mongo_node_3
+      command: ["--replSet", "testSet"]
+      hostname: node3
+      networks:
+        mongo_net:
+          ipv4_address: 172.40.0.4
+      expose:
+        - 27017
+      volumes:
+  spring_mongorest:
+      image: api2021mongo:newest
+      container_name: spring_mongorest
+      hostname: spring_mongorest
+      depends_on:
+        - mongo_node_1
+        - mongo_node_2
+        - mongo_node_3
+      networks:
+        mongo_net:
+          ipv4_address: 172.40.0.5
+      ports:
+        - "8080:8080"
+networks:
+  mongo_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.40.0.0/24
